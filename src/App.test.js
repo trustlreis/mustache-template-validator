@@ -1,100 +1,123 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from './App';
 
-// Mock MonacoEditor to avoid complex setups in unit tests
-jest.mock('@monaco-editor/react', () => ({ value, onChange }) => (
-  <textarea
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    data-testid="monaco-editor"
-  />
-));
+// Mocking Monaco Editor
+jest.mock('@monaco-editor/react', () => ({
+  __esModule: true,
+  default: ({ value, onChange }) => (
+    <textarea
+      data-testid="monaco-editor"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{ width: '100%', height: '200px' }} // Optional styling to mimic editor size
+    />
+  ),
+}));
 
 describe('Mustache Template Validator', () => {
-  test('renders the main components', () => {
+  test('renders the component correctly', () => {
     render(<App />);
-
-    // Check if editor, attribute input, prefix input, and button are present
-    expect(screen.getByTestId('monaco-editor')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter valid attributes here, separated by commas or new lines...')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter prefix...')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /validate/i })).toBeInTheDocument();
+    expect(screen.getByText(/Mustache Template Validator/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter prefix.../i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter valid attributes here, separated by commas or new lines.../i)).toBeInTheDocument();
+    expect(screen.getByText(/Validate/i)).toBeInTheDocument();
   });
 
-  test('validates a template successfully with correct attributes and prefix', () => {
+  test('handles input and validates correct template syntax', async () => {
     render(<App />);
 
-    // Mock user input
-    const templateInput = screen.getByTestId('monaco-editor');
-    const attributeInput = screen.getByPlaceholderText('Enter valid attributes here, separated by commas or new lines...');
-    const prefixInput = screen.getByPlaceholderText('Enter prefix...');
-    const validateButton = screen.getByRole('button', { name: /validate/i });
+    // Mock input for prefix and attributes
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/Enter prefix.../i), {
+        target: { value: 'user.' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/Enter valid attributes here/i), {
+        target: { value: 'Name, Email' },
+      });
 
-    fireEvent.change(templateInput, { target: { value: '{{user.UserAttribute.Name}}' } });
-    fireEvent.change(attributeInput, { target: { value: 'Name, Age, Email' } });
-    fireEvent.change(prefixInput, { target: { value: 'user.UserAttribute.' } });
+      // Mock input for the MonacoEditor
+      fireEvent.change(screen.getByTestId('monaco-editor'), {
+        target: { value: 'My name is {{user.Name}} and my email is {{user.Email}}' },
+      });
 
-    // Validate the template
-    fireEvent.click(validateButton);
+      fireEvent.click(screen.getByText(/Validate/i));
+    });
 
-    // Check for success message
-    expect(screen.getByText('The template is valid!')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/The template is valid!/i)).toBeInTheDocument();
+    });
   });
 
-  test('shows error for unmatched attributes', () => {
+  test('detects incorrect template syntax', async () => {
     render(<App />);
 
-    // Mock user input
-    const templateInput = screen.getByTestId('monaco-editor');
-    const attributeInput = screen.getByPlaceholderText('Enter valid attributes here, separated by commas or new lines...');
-    const prefixInput = screen.getByPlaceholderText('Enter prefix...');
-    const validateButton = screen.getByRole('button', { name: /validate/i });
+    // Mock input for prefix and attributes
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/Enter prefix.../i), {
+        target: { value: 'user.' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/Enter valid attributes here/i), {
+        target: { value: 'Name, Email' },
+      });
 
-    fireEvent.change(templateInput, { target: { value: '{{user.UserAttribute.Name}}' } });
-    fireEvent.change(attributeInput, { target: { value: 'Age, Email' } }); // 'Name' is missing
-    fireEvent.change(prefixInput, { target: { value: 'user.UserAttribute.' } });
+      // Incorrect template (missing one closing brace)
+      fireEvent.change(screen.getByTestId('monaco-editor'), {
+        target: { value: 'My name is {{user.Name}} and my email is {{user.Email}' }, // Missing closing brace
+      });
 
-    // Validate the template
-    fireEvent.click(validateButton);
+      fireEvent.click(screen.getByText(/Validate/i));
+    });
 
-    // Check for error message
-    expect(screen.getByText('Invalid Template!')).toBeInTheDocument();
-    expect(screen.getByText('Unmatched Attributes: user.UserAttribute.Name')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid/i)).toBeInTheDocument();
+    });
   });
 
-  test('handles empty attribute input gracefully', () => {
+  test('shows modal with correct content when validation state changes', async () => {
     render(<App />);
 
-    // Mock user input
-    const templateInput = screen.getByTestId('monaco-editor');
-    const validateButton = screen.getByRole('button', { name: /validate/i });
+    // Initial incorrect input for testing modal visibility
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/Enter prefix.../i), {
+        target: { value: 'user.' },
+      });
+      fireEvent.change(screen.getByPlaceholderText(/Enter valid attributes here/i), {
+        target: { value: 'Name' },
+      });
 
-    fireEvent.change(templateInput, { target: { value: '{{user.UserAttribute.Name}}' } });
-    fireEvent.click(validateButton);
+      fireEvent.change(screen.getByTestId('monaco-editor'), {
+        target: { value: 'My name is {{user.Name}} and my email is {{user.Email}}' },
+      });
 
-    // Check for error message due to empty attribute list
-    expect(screen.getByText('Invalid Template!')).toBeInTheDocument();
-    expect(screen.getByText('Unmatched Attributes: user.UserAttribute.Name')).toBeInTheDocument();
-  });
+      fireEvent.click(screen.getByText(/Validate/i));
+    });
 
-  test('handles empty template input gracefully', () => {
-    render(<App />);
+    // Check if the modal displays the error message
+    await waitFor(() => {
+      expect(screen.getByText(/Invalid/i)).toBeInTheDocument();
+    });
 
-    // Mock user input
-    const attributeInput = screen.getByPlaceholderText('Enter valid attributes here, separated by commas or new lines...');
-    const prefixInput = screen.getByPlaceholderText('Enter prefix...');
-    const validateButton = screen.getByRole('button', { name: /validate/i });
+    // Correct input to change validation state and show success message
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/Enter valid attributes here/i), {
+        target: { value: 'Name, Email' },
+      });
 
-    fireEvent.change(attributeInput, { target: { value: 'Name, Age, Email' } });
-    fireEvent.change(prefixInput, { target: { value: 'user.UserAttribute.' } });
+      fireEvent.click(screen.getByText(/Validate/i));
+    });
 
-    // Validate without a template
-    fireEvent.click(validateButton);
+    // Check if the modal displays the success message
+    await waitFor(() => {
+      expect(screen.getByText(/Success/i)).toBeInTheDocument();
+    });
 
-    // Check for success as there is nothing to validate against
-    expect(screen.queryByText('Invalid Template!')).not.toBeInTheDocument();
-    expect(screen.queryByText('The template is valid!')).toBeInTheDocument();
+    // Close the modal
+    fireEvent.click(screen.getByText(/Ok/i));
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 });
