@@ -12,6 +12,10 @@ This is a React application that allows users to validate Mustache templates aga
 ## Screenshots
 
 ![Screenshot of Mustache Template Validator](screenshot.png)
+![Screenshot of Mustache Template Validator - prefix](screenshot-prefix.png)
+![Screenshot of Mustache Template Validator - syntax ok](screenshot-syntax-ok.png)
+![Screenshot of Mustache Template Validator - syntax error](screenshot-syntax-error.png)
+
 
 ## Table of Contents
 

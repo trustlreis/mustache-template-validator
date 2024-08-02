@@ -1,49 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import Mustache from 'mustache'; // Import Mustache library
 import './App.css';
+import Modal from './components/Modal'; // Import the Modal component
 
 function App() {
   const [template, setTemplate] = useState('');
   const [attributeInput, setAttributeInput] = useState('');
   const [prefix, setPrefix] = useState('');
   const [validationResult, setValidationResult] = useState(null);
+  const [showModal, setShowModal] = useState(false); // State to control the modal visibility
+  const [prevValidationResult, setPrevValidationResult] = useState(null); // State to track the previous validation result
 
-  // Function to parse attributes input and return as an array
+  // Function to parse attributes input and return as an object
   const parseAttributes = () => {
-    return attributeInput
+    const attributes = attributeInput
       .split(/[\n,]+/) // Split by new lines or commas
       .map((attr) => attr.trim()) // Trim spaces
       .filter((attr) => attr.length > 0); // Remove empty strings
+
+    const attributeObject = {};
+    attributes.forEach((attr) => {
+      attributeObject[`${prefix}${attr}`] = `value_of_${attr}`;
+    });
+    return attributeObject;
   };
 
-  // Function to validate the template
+  // Function to validate the template using Mustache
   const validateTemplate = () => {
-    const validAttributes = parseAttributes().map(attr => `${prefix}${attr}`); // Concatenate prefix
+    const data = parseAttributes();
+    try {
+      // Render the template with the data
+      Mustache.render(template, data);
 
-    // Extract Mustache placeholders
-    const placeholders = extractMustachePlaceholders(template);
+      // Extract Mustache placeholders
+      const templatePlaceholders = extractMustachePlaceholders(template);
 
-    // Compare placeholders with valid attributes
-    const unmatchedAttributes = placeholders.filter(
-      (placeholder) => !validAttributes.includes(placeholder)
-    );
+      // Check if all placeholders are matched by rendered output
+      const unmatchedAttributes = templatePlaceholders.filter(
+        (placeholder) => !Object.keys(data).includes(placeholder)
+      );
 
-    if (unmatchedAttributes.length > 0) {
+      if (unmatchedAttributes.length > 0) {
+        setValidationResult({
+          isValid: false,
+          unmatched: unmatchedAttributes,
+        });
+      } else {
+        setValidationResult({
+          isValid: true,
+          unmatched: [],
+        });
+      }
+    } catch (error) {
       setValidationResult({
         isValid: false,
-        unmatched: unmatchedAttributes,
-      });
-    } else {
-      setValidationResult({
-        isValid: true,
-        unmatched: [],
+        unmatched: [error.message],
       });
     }
   };
 
   // Function to extract Mustache placeholders
   const extractMustachePlaceholders = (template) => {
-    const regex = /{{\s*([\w\.]+)\s*}}/g;
+    // Updated regex to support dot and bracket notation
+    const regex = /{{\s*([\w.]+(?:\[[\w.]+\])*)\s*}}/g;
     let match;
     const placeholders = [];
     while ((match = regex.exec(template)) !== null) {
@@ -51,6 +71,21 @@ function App() {
     }
     return placeholders;
   };
+
+  // Effect to handle showing the modal on validation state changes
+  useEffect(() => {
+    // Check if the validationResult is different from the previous one
+    if (
+      validationResult !== null &&
+      prevValidationResult !== null &&
+      validationResult.isValid !== prevValidationResult.isValid
+    ) {
+      setShowModal(true);
+    }
+
+    // Update the previous validation result
+    setPrevValidationResult(validationResult);
+  }, [validationResult, prevValidationResult]);
 
   return (
     <div className="App">
@@ -69,8 +104,6 @@ function App() {
           placeholder="Enter valid attributes here, separated by commas or new lines..."
           value={attributeInput}
           onChange={(e) => setAttributeInput(e.target.value)}
-          rows="10"
-          cols="30"
           className="attributes-input"
         />
         <div className="editor-container">
@@ -97,20 +130,36 @@ function App() {
         </div>
       </div>
       <div className="validation-result">
-        <button onClick={validateTemplate}>Validate</button>
+        <button onClick={validateTemplate} className="validate-button">
+          Validate
+        </button>
         {validationResult && (
-          <div>
-            {validationResult.isValid ? (
-              <p style={{ color: 'green' }}>The template is valid!</p>
-            ) : (
-              <div>
-                <p style={{ color: 'red' }}>Invalid Template!</p>
-                <p>Unmatched Attributes: {validationResult.unmatched.join(', ')}</p>
-              </div>
-            )}
-          </div>
+          <span className={`status-message ${validationResult.isValid ? 'valid' : 'invalid'}`}>
+            {validationResult.isValid ? 'The template is valid!' : `Invalid Template! Unmatched Attributes: ${validationResult.unmatched.join(', ')}`}
+          </span>
         )}
       </div>
+      {/* Modal for Alert */}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        title={validationResult?.isValid ? "Validation Success" : "Validation Error"}
+        isValid={validationResult?.isValid}
+      >
+        <div>
+          {validationResult?.isValid ? (
+            <div style={{ color: 'green' }}>
+              <img src="https://img.icons8.com/color/48/000000/checkmark--v1.png" alt="Success Icon" style={{ width: '50px', marginBottom: '10px' }} />
+              <p>The template is valid!</p>
+            </div>
+          ) : (
+            <div style={{ color: 'red' }}>
+              <img src="https://img.icons8.com/ios/50/000000/error--v1.png" alt="Error Icon" style={{ width: '50px', marginBottom: '10px' }} />
+              <p>Invalid Template! Unmatched Attributes: {validationResult?.unmatched.join(', ')}</p>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 }
