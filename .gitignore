@@ -1,0 +1,302 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build outputs
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.log
+*.pid
+*.pid.lock
+
+# Yarn Integrity
+.yarn-integrity
+
+# Yarn files
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# IDE or Editor Directories
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MacOS files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Miscellaneous
+*.swp
+*.swp*
+*.swo
+*~
+.project
+.classpath
+.c9/
+
+# Test Coverage outputs
+coverage/
+
+# E2E Test results
+cypress/screenshots/
+cypress/videos/
+
+# Parcel-bundler cache (if using Parcel)
+.cache/
+
+# Other
+package-lock.json
+
+# Parcel cache
+.cache/
+
+# Parcel dist files
+.parcel-cache/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Others
+.eslintcache
+
+# Storybook
+storybook-static/
+
+# Prettier
+.prettiercache
+
+# npm package
+*.tgz
+
+# Debug
+node-inspector.json
+
+# IntelliJ IDEA
+*.iws
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/scala_compiler.xml
+.idea/**/projectSettings.xml
+.idea/**/other.xml
+.idea/**/deployment.xml
+.idea/**/remoteDeploy.xml
+
+# Visual Studio Code
+.vscode/
+
+# Exclude .env files if they contain sensitive data
+.env
+.env.*.local
+
+# Netlify
+.netlify/
+
+# TernJS
+.tern-port
+
+# Compiled source files
+*.dll
+*.exe
+*.out
+*.pyc
+*.pyo
+*.rbc
+*.class
+*.sublime-project
+*.sublime-workspace
+
+# Cache files for IDE
+.cache/
+
+# JetBrains IDEs
+*.iws
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/scala_compiler.xml
+.idea/**/projectSettings.xml
+.idea/**/other.xml
+.idea/**/deployment.xml
+.idea/**/remoteDeploy.xml
+
+# Logs
+logs
+*.log
+logs/*.log
+
+# Production build
+/build
+
+# Storybook build outputs
+/storybook-static
+
+# vscode settings folder
+/.vscode
+
+# local environment settings
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Next.js build outputs
+.next
+out
+
+# Vite build outputs
+.vite
+
+# Nuxt.js build outputs
+.nuxt
+.nuxt-dev
+
+# Gatsby files
+.cache/
+public/
+
+# Additional directories
+history/
+
+# Tailwind CSS build outputs
+.tailwindcss
+
+# Nuxt.js cache
+.nuxt/
+
+# End of line fix
+*~
+*.swp
+
+# Parcel cache
+.cache/
+
+# Nuxt generate
+dist/
+
+# Heroku
+Procfile
+
+# log files
+npm-debug.log*
+yarn-debug.log*
+
+# Various IDEs
+.idea/
+.DS_Store
+Thumbs.db
+
+# JetBrains
+*.iws
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/gradle.xml
+.idea/**/libraries
+.idea/**/scala_compiler.xml
+.idea/**/projectSettings.xml
+.idea/**/other.xml
+.idea/**/deployment.xml
+.idea/**/remoteDeploy.xml
+
+# OSX files
+.DS_Store
+
+# Windows files
+Thumbs.db
+
+# Temporary files
+*.tmp
+
+# Editor files
+*.sublime-project
+*.sublime-workspace
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+.idea/workspace.xml
+
+# Visual Studio Code
+.vscode/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Laravel Mix (Version >= 6) file
+mix-manifest.json
+
+# Laravel Mix (Legacy) file
+npm-debug.log*
