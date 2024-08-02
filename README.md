@@ -1,159 +1,261 @@
 # Mustache Template Validator
 
-This is a React application that allows users to validate Mustache templates against a list of dynamic attributes and a prefix. The app uses Monaco Editor for syntax highlighting and provides real-time feedback on template validity.
-
-## Features
-
-- **Syntax Highlighting**: Utilize Monaco Editor to provide a rich text editing experience with HTML syntax highlighting.
-- **Dynamic Attribute Input**: Enter attributes dynamically via a textarea, separated by commas or new lines.
-- **Prefix Support**: Add a prefix to attributes to match complex Mustache template structures.
-- **Validation Feedback**: Get real-time feedback on whether the template is valid or lists unmatched attributes.
-
-## Screenshots
-
-![Screenshot of Mustache Template Validator](screenshot.png)
-![Screenshot of Mustache Template Validator - prefix](screenshot-prefix.png)
-![Screenshot of Mustache Template Validator - syntax ok](screenshot-syntax-ok.png)
-![Screenshot of Mustache Template Validator - syntax error](screenshot-syntax-error.png)
-
+A React application that validates HTML templates using Mustache syntax against a list of attributes. This application features a Monaco Editor for editing templates and a modal to display validation results.
 
 ## Table of Contents
 
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Running Tests](#running-tests)
+- [Screenshots](#screenshots)
 - [File Structure](#file-structure)
-- [Technologies Used](#technologies-used)
+- [Running Unit Tests](#running-unit-tests)
+- [Running E2E Tests with Cypress](#running-e2e-tests-with-cypress)
+- [Continuous Integration with GitHub Actions](#continuous-integration-with-github-actions)
 - [Contributing](#contributing)
 - [License](#license)
-- [Contact](#contact)
+
+## Features
+
+- **Mustache Template Validation**: Validates templates against user-defined attributes.
+- **Monaco Editor**: Provides a powerful editor for writing templates.
+- **Modal Alerts**: Displays validation results in a modal dialog.
+- **Responsive Design**: Adapts to various screen sizes, including mobile and tablet.
 
 ## Installation
 
-Follow these steps to set up and run the project locally:
-
-1. **Clone the Repository**
+1. **Clone the Repository**:
 
    ```bash
    git clone git@github.com:trustlreis/mustache-template-validator.git
+   ```
+
+2. **Navigate to the Project Directory**:
+
+   ```bash
    cd mustache-template-validator
    ```
 
-2. **Install Dependencies**
-
-   Make sure you have Node.js and npm installed, then run:
+3. **Install Dependencies**:
 
    ```bash
    npm install
    ```
 
-3. **Start the Development Server**
+## Usage
+
+1. **Start the Development Server**:
 
    ```bash
    npm start
    ```
 
-   The application will be available at [http://localhost:3000](http://localhost:3000).
+2. **Open the Application**:
 
-## Usage
+   Open your browser and visit `http://localhost:3000`.
 
-1. **Enter Mustache Template**: Use the Monaco Editor to type your Mustache template with placeholders, e.g., `{{user.UserAttribute.Name}}`.
+3. **Use the Application**:
+   - Enter a prefix and attributes separated by commas or new lines.
+   - Write your Mustache template in the Monaco Editor.
+   - Click the "Validate" button to check the template.
 
-2. **Input Attributes**: Enter attributes in the textarea, separated by commas or new lines, e.g., `Name, Age, Email`.
+## Screenshots
 
-3. **Set Prefix**: Specify a prefix for the attributes in the input field, e.g., `user.UserAttribute.`.
+Here are some screenshots showcasing the application's UI and features:
 
-4. **Validate**: Click the "Validate" button to check if the Mustache template is valid. You will see a success message if all placeholders match the provided attributes and prefix, or an error message listing unmatched attributes.
+### Application Interface Without Prefix
 
-## Running Tests
+![Without Prefix](screenshot-without-prefix.png)
 
-### Unit Tests
+### Template Syntax Validation - Success
 
-Unit tests are implemented using Jest and React Testing Library.
+![Syntax OK](screenshot-syntax-ok.png)
 
-Run the tests with:
+### Template Syntax Validation - Error
 
-```bash
-npm test
+![Syntax Error](screenshot-syntax-error.png)
+
+## File Structure
+
+The project is organized as follows:
+
+```plaintext
+mustache-template-validator/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml                   # GitHub Actions workflow for CI/CD
+│
+├── cypress/
+│   ├── e2e/
+│   │   └── mustacheValidation.cy.js # Cypress E2E test spec file
+│   ├── fixtures/
+│   ├── support/
+│   │   ├── commands.js              # Custom Cypress commands (optional)
+│   │   └── e2e.js                   # Cypress support configuration
+│   └── cypress.config.js            # Cypress configuration file
+│
+├── public/
+│   ├── favicon.svg                  # Favicon for the app
+│   ├── index.html                   # Main HTML file for React app
+│   └── manifest.json                # Web app manifest
+│
+├── src/
+│   ├── components/
+│   │   └── Modal.js                 # Modal component
+│   ├── styles/
+│   │   └── App.css                  # Main CSS styles
+│   ├── App.js                       # Main React component
+│   ├── App.test.js                  # Unit tests for App component
+│   ├── index.js                     # Entry point for React app
+│   ├── reportWebVitals.js           # Performance metrics (optional)
+│   └── setupTests.js                # Jest test setup file
+│
+├── .gitignore                       # Ignored files for git
+├── LICENSE                          # License file
+├── package.json                     # NPM package configuration
+├── package-lock.json                # Lockfile for NPM dependencies
+├── README.md                        # Project documentation
+├── screenshot-syntax-error.png      # Screenshot for syntax error example
+├── screenshot-without-prefix.png    # Screenshot for interface without prefix
+└── screenshot-syntax-ok.png         # Screenshot for successful validation
 ```
 
-### End-to-End Tests
+## Running Unit Tests
 
-End-to-end tests are implemented using Cypress.
+Unit tests are handled using [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/).
 
-1. **Open Cypress Test Runner**:
+1. **Run Unit Tests**:
+
+   ```bash
+   npm test
+   ```
+
+   This command runs the test suite and watches for changes.
+
+2. **Test Cases**:
+
+   - **Component Rendering**: Ensures all UI elements are correctly rendered.
+   - **Template Validation**: Tests both valid and invalid template scenarios.
+   - **Modal Behavior**: Verifies modal displays the correct validation results.
+
+### Test Coverage
+
+For test coverage details, you can use:
+
+```bash
+npm test -- --coverage
+```
+
+This will generate a detailed report of code coverage.
+
+## Running E2E Tests with Cypress
+
+Cypress is used for end-to-end testing, simulating real user interactions.
+
+1. **Install Cypress**:
+
+   ```bash
+   npm install --save-dev cypress
+   ```
+
+2. **Open Cypress**:
 
    ```bash
    npm run cypress:open
    ```
 
-   This command opens the Cypress test runner, where you can select and run your E2E tests.
+3. **Run E2E Tests**:
 
-2. **Run Cypress Tests in CLI**:
+   Inside the Cypress Test Runner, select the `mustacheValidation.cy.js` spec file to execute the tests.
 
-   ```bash
-   npm run cypress:run
+4. **Cypress Test Cases**:
+
+   - **Render Tests**: Confirms all elements are visible.
+   - **Validation Tests**: Checks correct and incorrect template validation.
+   - **Modal Interaction**: Tests modal visibility and content accuracy.
+
+5. **Cypress Configuration**:
+
+   Update `cypress.config.js` as needed:
+
+   ```javascript
+   const { defineConfig } = require('cypress');
+
+   module.exports = defineConfig({
+     e2e: {
+       baseUrl: 'http://localhost:3000',
+       specPattern: 'cypress/e2e/**/*.cy.js',
+       viewportWidth: 1000,
+       viewportHeight: 660,
+       retries: {
+         runMode: 2,
+         openMode: 0,
+       },
+     },
+   });
    ```
 
-   This command runs all Cypress tests in the terminal and provides a report of the results.
+## Continuous Integration with GitHub Actions
 
-## File Structure
+This project uses GitHub Actions for CI/CD, running unit tests automatically on pushes and pull requests.
 
-```
-mustache-template-validator/
-│
-├── public/
-│   ├── index.html
-│   └── favicon.ico
-│
-├── src/
-│   ├── components/
-│   │   └── CustomEditor.js
-│   ├── App.css
-│   ├── App.js
-│   ├── App.test.js
-│   ├── index.js
-│   └── reportWebVitals.js
-│
-├── cypress/
-│   ├── integration/
-│   │   └── mustacheValidator.spec.js
-│   └── support/
-│       ├── commands.js
-│       └── index.js
-│
-├── package.json
-├── README.md
-└── ...
-```
+1. **GitHub Actions Workflow**:
 
-- **src/components/CustomEditor.js**: Component for the Monaco Editor setup.
-- **src/App.js**: Main application logic.
-- **src/App.test.js**: Unit tests for the application.
-- **cypress/integration/mustacheValidator.spec.js**: End-to-end tests.
+   Located at `.github/workflows/ci.yml`:
 
-## Technologies Used
+   ```yaml
+   name: Run Unit Tests
 
-- **React**: A JavaScript library for building user interfaces.
-- **Monaco Editor**: The code editor that powers Visual Studio Code, used for syntax highlighting.
-- **Jest**: A delightful JavaScript Testing Framework with a focus on simplicity.
-- **React Testing Library**: For testing React components.
-- **Cypress**: A fast, easy, and reliable testing framework for anything that runs in a browser.
+   on:
+     push:
+       branches:
+         - main
+     pull_request:
+       branches:
+         - main
+
+   jobs:
+     test:
+       runs-on: ubuntu-latest
+
+       strategy:
+         matrix:
+           node-version: [16, 18, 20]
+
+       steps:
+         - name: Checkout repository
+           uses: actions/checkout@v3
+
+         - name: Set up Node.js
+           uses: actions/setup-node@v3
+           with:
+             node-version: ${{ matrix.node-version }}
+
+         - name: Install dependencies
+           run: npm install
+
+         - name: Run Unit Tests
+           run: npm test
+   ```
+
+2. **CI/CD Benefits**:
+
+   - **Automated Testing**: Runs tests automatically on each push or pull request, ensuring that code changes don't introduce regressions.
+   - **Multi-Version Testing**: Tests across multiple Node.js versions for compatibility.
 
 ## Contributing
 
-Contributions are welcome! Follow these steps to contribute:
+Contributions are welcome! Please follow these steps:
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make your changes and commit them (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature`).
-5. Open a pull request.
+1. **Fork the Repository**: Create a fork on GitHub.
+2. **Clone the Fork**: Clone the fork to your local machine.
+3. **Create a Branch**: Create a new feature branch.
+4. **Commit Changes**: Make your changes and commit them with descriptive messages.
+5. **Push Changes**: Push your changes to your fork.
+6. **Open a Pull Request**: Submit a pull request on GitHub.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any questions, feel free to contact me at [luis.reis@trustly.com](mailto:luis.reis@trustly.com).
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+```
